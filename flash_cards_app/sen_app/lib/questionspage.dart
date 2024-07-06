@@ -12,6 +12,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
   int questionCount = 0;
   int currentQuestion = 1;
   bool lastQuestion = false;
+  bool checkAnswer = false;
   Map answered = {
     "1": {"answered": false, "answer": 0},
     "2": {"answered": false, "answer": 0},
@@ -22,11 +23,53 @@ class _QuestionsPageState extends State<QuestionsPage> {
   @override
   void initState() {
     super.initState();
-    widget.data["answered"] = [];
     widget.data.forEach((key, value) {
       questionCount++;
-      widget.data["answered"].add([false, 0]);
     });
+  }
+
+  void showResultDialog() {
+    int correctAnswers = calcCorrect();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Quiz Result'),
+          content: Text(
+              'You answered $correctAnswers out of $questionCount questions correctly!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .pop(); // To go back to the previous screen
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  int calcCorrect() {
+    int correctAnswers = 0;
+    try {
+      for (int i = 1; i <= questionCount; i++) {
+        int selectedOptionIndex = answered["$i"]["answer"];
+        String selectedOption =
+            widget.data["$i"]["options"][selectedOptionIndex];
+        if (selectedOption == widget.data["$i"]["answer"]) {
+          correctAnswers++;
+        }
+      }
+      debugPrint("Correct Answers: $correctAnswers");
+      return correctAnswers;
+    } catch (e) {
+      debugPrint("$e");
+      return correctAnswers;
+    }
   }
 
   @override
@@ -237,15 +280,15 @@ class _QuestionsPageState extends State<QuestionsPage> {
             ),
           ),
 
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: notAnswered
-          //       ? const Text(
-          //           'Choose an option first!',
-          //           style: TextStyle(color: Colors.red),
-          //         )
-          //       : const Text(''),
-          // ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: checkAnswer
+                ? const Text(
+                    'Choose an option first!',
+                    style: TextStyle(color: Colors.red),
+                  )
+                : const Text(''),
+          ),
 
           //
           const Expanded(child: SizedBox()),
@@ -271,9 +314,23 @@ class _QuestionsPageState extends State<QuestionsPage> {
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black87),
                     onPressed: () {
-                      if (currentQuestion < 3) {
+                      setState(() {
+                        checkAnswer = false;
+                      });
+                      if (answered["$currentQuestion"]["answered"]) {
+                        if (currentQuestion < questionCount) {
+                          setState(() {
+                            currentQuestion++;
+                            if (currentQuestion == questionCount) {
+                              lastQuestion = true;
+                            }
+                          });
+                        } else if (lastQuestion) {
+                          showResultDialog();
+                        }
+                      } else {
                         setState(() {
-                          currentQuestion++;
+                          checkAnswer = true;
                         });
                       }
                     },
