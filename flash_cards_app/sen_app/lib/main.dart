@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:sen_app/questionspage.dart';
+import 'package:sen_app/studentpage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,81 +21,52 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Topics'),
+      home: const StudentPage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage(
+      {super.key, required this.title, required this.name, required this.data});
+  final String name;
+  final Map data;
   final String title;
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<void> sendGetRequest() async {
-    // Define the endpoint  // Replace with your specific endpoint
-    final Uri url = Uri.parse(
-        'https://api.unsplash.com/photos/random/?client_id=keYInDDK6q6ETrQE0vS2aFvzyA5H-VayHyuJ0xZtMe8');
-    try {
-      // Send the GET request
-      final response = await http.get(url);
-      // Check for a successful response
-      if (response.statusCode == 200) {
-        // Parse and print the response body
-        setState(() {
-          urll = jsonDecode(response.body)['urls']['regular'];
-        });
-        final data = jsonDecode(response.body);
-        debugPrint('Response data: $data');
-      } else {
-        // Handle non-successful response
-        debugPrint('Request failed with status: ${response.statusCode}');
-      }
-    } catch (e) {
-      // Handle any errors that occur
-      debugPrint('Error occurred: $e');
-    }
-  }
+  // Future<void> sendGet() async {
+  //   List<Widget> temptopics = [];
+  //   final Uri url = Uri.parse('http://192.168.245.71:5000/get_document');
 
-  Future<void> sendGet() async {
-    List<Widget> temptopics = [];
+  //   try {
+  //     // Send the GET request
+  //     final response = await http.get(url).timeout(const Duration(seconds: 24));
 
-    // Define the endpoint  // Replace with your specific endpoint
-    final Uri url = Uri.parse('http://192.168.245.71:5000/get_document');
-
-    // Set up headers
-    // final Map<String, String> headers = {
-    //   'Authorization': 'Client-ID $accessKey',
-    // };
-
-    try {
-      // Send the GET request
-      final response = await http.get(url).timeout(const Duration(seconds: 24));
-
-      // Check for a successful response
-      if (response.statusCode == 200) {
-        debugPrint('1');
-        final data = jsonDecode(response.body);
-        debugPrint(response.body);
-        for (var name in data['names']) {
-          debugPrint('10');
-          temptopics.add(buildTopics(name, data[name]));
-        }
-        debugPrint('3');
-      } else {
-        // Handle non-successful response
-        debugPrint('Request failed with status: ${response.statusCode}');
-      }
-      setState(() {
-        topics.addAll(temptopics);
-      });
-    } catch (e) {
-      // Handle any errors that occur
-      debugPrint('Error occurred: $e');
-    }
-  }
+  //     // Check for a successful response
+  //     if (response.statusCode == 200) {
+  //       debugPrint('1');
+  //       final data = jsonDecode(response.body);
+  //       debugPrint(response.body);
+  //       for (var name in data['names']) {
+  //         debugPrint('10');
+  //         temptopics.add(buildTopics(name, data[name]));
+  //       }
+  //       debugPrint('3');
+  //     } else {
+  //       // Handle non-successful response
+  //       debugPrint('Request failed with status: ${response.statusCode}');
+  //     }
+  //     setState(() {
+  //       topics.addAll(temptopics);
+  //     });
+  //   } catch (e) {
+  //     // Handle any errors that occur
+  //     debugPrint('Error occurred: $e');
+  //   }
+  // }
 
   Widget buildTopics(String name, Map data) {
     return ListTile(
@@ -147,6 +119,21 @@ class _MyHomePageState extends State<MyHomePage> {
   Map masterTopicDict = {};
 
   @override
+  void initState() {
+    super.initState();
+    Map data = widget.data;
+    List<Widget> temptopics = [];
+
+    for (var name in data["content"]["names"]) {
+      temptopics.add(buildTopics(name, data["content"][name]));
+    }
+
+    setState(() {
+      topics.addAll(temptopics);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -164,11 +151,11 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: sendGet,
-        tooltip: 'Increment',
-        child: const Icon(Icons.upload_file),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: sendGet,
+      //   tooltip: 'Increment',
+      //   child: const Icon(Icons.upload_file),
+      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
