@@ -1,19 +1,21 @@
-from flask import Flask, json, request, jsonify
+from flask import Flask, request, jsonify
 import os
 import requests
 import google.generativeai as genai
 from flask_cors import CORS
+import uuid
 
 app = Flask(__name__)
 CORS(app)
-app = Flask(__name__)
+
 genai.configure(api_key="AIzaSyBJJQMsJbz5wTUgTe1615WUkMFEJaNyCG0")
 model = genai.GenerativeModel(
     "gemini-1.5-flash", generation_config={"response_mime_type": "application/json"}
 )
 
+master_dictionary = {"ids": []}
 
-def process_and_send_to_gemini(filepath):
+def process_and_send_to_gemini(filepath, filename):
     extension = os.path.splitext(filepath)[1].lower()
     text = ""
 
@@ -62,7 +64,14 @@ def process_and_send_to_gemini(filepath):
 ]
 }"""
         )
-        return response.json()  # Return the response from Gemini API
+        
+        # Store the response in master_dictionary
+        response_content = response.json()
+        doc_id = str(uuid.uuid4())
+        master_dictionary[doc_id] = {"content": response_content, "name": filename}
+        master_dictionary["ids"].append(doc_id)
+        
+        return response_content  # Return the response from Gemini API
     else:
         return {"error": "No text extracted from document"}
 
@@ -75,11 +84,11 @@ def process_doc():
     file = request.files["document"]
 
     # Save the file temporarily
-    filepath = os.path.join(app.config["uploads"], file.filename)
+    filepath = os.path.join("/tmp", file.filename)
     file.save(filepath)
 
     # Process the document and send to Gemini
-    response = process_and_send_to_gemini(filepath)
+    response = process_and_send_to_gemini(filepath, file.filename)
 
     # Remove the temporary file
     os.remove(filepath)
@@ -191,18 +200,25 @@ def send_data():
             + text
             + """,
                 "desired_output": [
-                "For each identified topic, generate 3 multiple-choice questions with only easy and  hard difficulty level ",
+                "For each identified topic, generate 3 multiple-choice questions with only easy and hard difficulty level ",
                 "Structure the output in the following JSON format:",
                 "{topicname: {questionnumber: {question: "question here", difficultylevels: "difficulty", answer: "answer here", options: ["4 options here"]}}, names: ["all topic name here"]}"
                 ]
                 }"""
         )
+        
+        response_content = response.json()
+        doc_id = str(uuid.uuid4())
+        master_dictionary[doc_id] = {"content": response_content, "name": "Harry Potter Summary"}
+        master_dictionary["ids"].append(doc_id)
+        
         print(response.text)
-        return response.text
+        return jsonify(response_content)
 
     else:
         return {"error": "No text extracted from document"}
 
 
 if __name__ == "__main__":
+    app.config["uploads"] = "/tmp"  # Set the uploads folder
     app.run(host="0.0.0.0", port=5000)
