@@ -205,7 +205,4 @@ def send_data():
 
 
 if __name__ == "__main__":
-    app.config["UPLOAD_FOLDER"] = (
-        "/tmp/uploads"  # Replace with desired temporary upload location
-    )
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)

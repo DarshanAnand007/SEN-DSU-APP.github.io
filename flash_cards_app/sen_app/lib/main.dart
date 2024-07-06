@@ -36,16 +36,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // Define the endpoint  // Replace with your specific endpoint
     final Uri url = Uri.parse(
         'https://api.unsplash.com/photos/random/?client_id=keYInDDK6q6ETrQE0vS2aFvzyA5H-VayHyuJ0xZtMe8');
-
-    // Set up headers
-    // final Map<String, String> headers = {
-    //   'Authorization': 'Client-ID $accessKey',
-    // };
-
     try {
       // Send the GET request
       final response = await http.get(url);
-
       // Check for a successful response
       if (response.statusCode == 200) {
         // Parse and print the response body
@@ -68,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Widget> temptopics = [];
 
     // Define the endpoint  // Replace with your specific endpoint
-    final Uri url = Uri.parse('http://127.0.0.1:5000/get_document');
+    final Uri url = Uri.parse('http://192.168.245.71:5000/get_document');
 
     // Set up headers
     // final Map<String, String> headers = {
@@ -120,14 +113,14 @@ class _MyHomePageState extends State<MyHomePage> {
       onTap: () {
         debugPrint("$name is the topic");
         Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => QuestionsPage(
-                    data: data,
-                    name: name,
-                  ),
-                ),
-              );
+          context,
+          MaterialPageRoute(
+            builder: (context) => QuestionsPage(
+              data: data,
+              name: name,
+            ),
+          ),
+        );
       },
       shape: const RoundedRectangleBorder(
           side: BorderSide(color: Colors.black, width: 2),

@@ -12,11 +12,20 @@ class _QuestionsPageState extends State<QuestionsPage> {
   int questionCount = 0;
   int currentQuestion = 1;
   bool lastQuestion = false;
+  Map answered = {
+    "1": {"answered": false, "answer": 0},
+    "2": {"answered": false, "answer": 0},
+    "3": {"answered": false, "answer": 0},
+    "4": {"answered": false, "answer": 0},
+  };
+
   @override
   void initState() {
     super.initState();
+    widget.data["answered"] = [];
     widget.data.forEach((key, value) {
       questionCount++;
+      widget.data["answered"].add([false, 0]);
     });
   }
 
@@ -75,14 +84,16 @@ class _QuestionsPageState extends State<QuestionsPage> {
                       topRight: Radius.elliptical(16, 16),
                       bottomRight: Radius.elliptical(16, 16),
                       bottomLeft: Radius.elliptical(16, 16))),
-              // tileColor: selectedAnswers["q$questionCount"] == "a"
-              //     ? Colors.amber
-              //     : Colors.grey.shade200,
+              tileColor: answered["$currentQuestion"]["answered"] == true &&
+                      answered["$currentQuestion"]["answer"] == 0
+                  ? Colors.amber
+                  : Colors.grey.shade200,
               onTap: () {
-                // setState(() {
-                //   notAnswered = false;
-                //   selectedAnswers["q$questionCount"] = "a";
-                // });
+                // debugPrint(widget.data["a"]);
+                setState(() {
+                  answered["$currentQuestion"]["answered"] = true;
+                  answered["$currentQuestion"]["answer"] = 0;
+                });
               },
               leading: Container(
                   width: 25,
@@ -114,16 +125,17 @@ class _QuestionsPageState extends State<QuestionsPage> {
                       topRight: Radius.elliptical(16, 16),
                       bottomRight: Radius.elliptical(16, 16),
                       bottomLeft: Radius.elliptical(16, 16))),
-              // tileColor: selectedAnswers["q$questionCount"] == "b"
-              //     ? Colors.amber
-              //     : Colors.grey.shade200,
-              // onTap: () {
-              //   setState(() {
-              //     notAnswered = false;
-
-              //     selectedAnswers["q$questionCount"] = "b";
-              //   });
-              // },
+              tileColor: answered["$currentQuestion"]["answered"] == true &&
+                      answered["$currentQuestion"]["answer"] == 1
+                  ? Colors.amber
+                  : Colors.grey.shade200,
+              onTap: () {
+                // debugPrint(widget.data["a"]);
+                setState(() {
+                  answered["$currentQuestion"]["answered"] = true;
+                  answered["$currentQuestion"]["answer"] = 1;
+                });
+              },
               leading: Container(
                   width: 25,
                   height: 25,
@@ -154,16 +166,17 @@ class _QuestionsPageState extends State<QuestionsPage> {
                       topRight: Radius.elliptical(16, 16),
                       bottomRight: Radius.elliptical(16, 16),
                       bottomLeft: Radius.elliptical(16, 16))),
-              // tileColor: selectedAnswers["q$questionCount"] == "c"
-              //     ? Colors.amber
-              //     : Colors.grey.shade200,
-              // onTap: () {
-              //   setState(() {
-              //     notAnswered = false;
-
-              //     selectedAnswers["q$questionCount"] = "c";
-              //   });
-              // },
+              tileColor: answered["$currentQuestion"]["answered"] == true &&
+                      answered["$currentQuestion"]["answer"] == 2
+                  ? Colors.amber
+                  : Colors.grey.shade200,
+              onTap: () {
+                // debugPrint(widget.data["a"]);
+                setState(() {
+                  answered["$currentQuestion"]["answered"] = true;
+                  answered["$currentQuestion"]["answer"] = 2;
+                });
+              },
               leading: Container(
                   width: 25,
                   height: 25,
@@ -194,15 +207,17 @@ class _QuestionsPageState extends State<QuestionsPage> {
                       topRight: Radius.elliptical(16, 16),
                       bottomRight: Radius.elliptical(16, 16),
                       bottomLeft: Radius.elliptical(16, 16))),
-              // tileColor: selectedAnswers["q$questionCount"] == "d"
-              //     ? Colors.amber
-              //     : Colors.grey.shade200,
-              // onTap: () {
-              //   setState(() {
-              //     notAnswered = false;
-              //     selectedAnswers["q$questionCount"] = "d";
-              //   });
-              // },
+              tileColor: answered["$currentQuestion"]["answered"] == true &&
+                      answered["$currentQuestion"]["answer"] == 3
+                  ? Colors.amber
+                  : Colors.grey.shade200,
+              onTap: () {
+                // debugPrint(widget.data["a"]);
+                setState(() {
+                  answered["$currentQuestion"]["answered"] = true;
+                  answered["$currentQuestion"]["answer"] = 3;
+                });
+              },
               leading: Container(
                   width: 25,
                   height: 25,
@@ -245,56 +260,20 @@ class _QuestionsPageState extends State<QuestionsPage> {
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black87),
                     onPressed: () {
-                      if (questionCount >= 2) {
+                      if (currentQuestion > 1) {
                         setState(() {
-                          lastQuestion = false;
-
                           currentQuestion--;
-                          // correctAnswerCount--;
                         });
-                        // debugPrint(correctAnswerCount.toString());
-                      } else {}
+                      }
                     },
                     child: const Text('Prev question')),
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black87),
                     onPressed: () {
-                      if (questionCount <= 2) {
+                      if (currentQuestion < 3) {
                         setState(() {
-                          // notAnswered = false;
-                          // if (selectedAnswers["q$questionCount"] ==
-                          //     answers["q$questionCount"]) {
-                          //   // correctAnswerCount++;
-                          // }
-                          if (questionCount == 2) {
-                            setState(() {
-                              lastQuestion = true;
-                            });
-                          }
                           currentQuestion++;
-                        });
-                        // debugPrint(correctAnswerCount.toString());
-                      } else if (questionCount > 9) {
-                        setState(() {
-                          // notAnswered = false;
-                        });
-                        // if (selectedAnswers["q$questionCount"] ==
-                        //     answers["q$questionCount"]) {
-                        //   // correctAnswerCount++;
-                        // }
-                        // Navigator.pop(context);
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => ResultPage(
-                        //           correctAnswerCount: correctAnswerCount)),
-                        // );
-
-                        // reInitalize();
-                      } else {
-                        setState(() {
-                          // notAnswered = true;
                         });
                       }
                     },
