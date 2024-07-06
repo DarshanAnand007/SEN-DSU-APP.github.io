@@ -204,5 +204,21 @@ def send_data():
         return {"error": "No text extracted from document"}
 
 
+@app.route("/upload", methods=["POST"])
+def upload_file():
+    if "file" not in request.files:
+        return jsonify({"error": "No file part"}), 400
+
+    file = request.files["file"]
+
+    if file.filename == "":
+        return jsonify({"error": "No selected file"}), 400
+
+    # Save the file to a desired location
+    file.save(f"../uploads/{file.filename}")
+
+    return jsonify({"message": "File successfully uploaded"}), 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

@@ -11,7 +11,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -37,40 +36,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Future<void> sendGet() async {
-  //   List<Widget> temptopics = [];
-  //   final Uri url = Uri.parse('http://192.168.245.71:5000/get_document');
-
-  //   try {
-  //     // Send the GET request
-  //     final response = await http.get(url).timeout(const Duration(seconds: 24));
-
-  //     // Check for a successful response
-  //     if (response.statusCode == 200) {
-  //       debugPrint('1');
-  //       final data = jsonDecode(response.body);
-  //       debugPrint(response.body);
-  //       for (var name in data['names']) {
-  //         debugPrint('10');
-  //         temptopics.add(buildTopics(name, data[name]));
-  //       }
-  //       debugPrint('3');
-  //     } else {
-  //       // Handle non-successful response
-  //       debugPrint('Request failed with status: ${response.statusCode}');
-  //     }
-  //     setState(() {
-  //       topics.addAll(temptopics);
-  //     });
-  //   } catch (e) {
-  //     // Handle any errors that occur
-  //     debugPrint('Error occurred: $e');
-  //   }
-  // }
-
-  Widget buildTopics(String name, Map data) {
+  Widget buildTopics(String name, Map<String, dynamic> data) {
     return ListTile(
-      // key: Key(name),
       leading: const Icon(
         Icons.batch_prediction,
         color: Colors.amber,
@@ -96,19 +63,21 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
       shape: const RoundedRectangleBorder(
-          side: BorderSide(color: Colors.black, width: 2),
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
-              bottomRight: Radius.circular(25),
-              bottomLeft: Radius.circular(25))),
+        side: BorderSide(color: Colors.black, width: 2),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+          bottomRight: Radius.circular(25),
+          bottomLeft: Radius.circular(25),
+        ),
+      ),
       trailing: GestureDetector(
         child: Icon(
           Icons.arrow_forward,
           color: Colors.red.shade600,
         ),
         onTap: () async {
-          debugPrint("gay");
+          debugPrint("arrow forward tapped");
         },
       ),
     );
@@ -124,8 +93,34 @@ class _MyHomePageState extends State<MyHomePage> {
     Map data = widget.data;
     List<Widget> temptopics = [];
 
-    for (var name in data["content"]["names"]) {
-      temptopics.add(buildTopics(name, data["content"][name]));
+    if (data != null && data.containsKey("ids")) {
+      for (var id in data["ids"]) {
+        debugPrint('Processing id: $id');
+        if (data[id] != null && data[id].containsKey('content')) {
+          Map<String, dynamic>? contentData = data[id]['content'];
+          if (contentData != null &&
+              contentData.containsKey('names') &&
+              contentData.containsKey('topics')) {
+            for (var topicName in contentData['names']) {
+              debugPrint('Processing topic: $topicName');
+              Map<String, dynamic>? topicContent =
+                  contentData['topics'][topicName];
+              if (topicContent != null) {
+                temptopics.add(buildTopics(topicName, topicContent));
+              } else {
+                debugPrint('Topic content is null for topic: $topicName');
+              }
+            }
+          } else {
+            debugPrint(
+                'Content data is missing names or topics key for id: $id');
+          }
+        } else {
+          debugPrint('Data for id $id does not contain content or is null');
+        }
+      }
+    } else {
+      debugPrint('Data does not contain ids key or is null');
     }
 
     setState(() {
@@ -151,11 +146,6 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: sendGet,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.upload_file),
-      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

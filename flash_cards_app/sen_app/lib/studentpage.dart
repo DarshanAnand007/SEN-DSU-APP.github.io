@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -42,9 +41,7 @@ class _StudentPageState extends State<StudentPage> {
   }
 
   final Dio _dio = Dio();
-  // ignore: unused_field
   bool _isUploading = false;
-  // ignore: unused_field
   String _message = '';
 
   Future<void> _pickFileAndUpload() async {
@@ -94,8 +91,8 @@ class _StudentPageState extends State<StudentPage> {
           _message = 'File uploaded successfully: ${response.data}';
         });
 
-        final data = jsonDecode(response.data);
-        debugPrint(response.data);
+        final data = response.data;
+        debugPrint(data.toString());
         for (var id in data['ids']) {
           tempDocuments.add(buildDocuments(data[id]["name"], data[id]));
         }
@@ -121,7 +118,6 @@ class _StudentPageState extends State<StudentPage> {
 
   Widget buildDocuments(String name, Map data) {
     return ListTile(
-      // key: Key(name),
       leading: const Icon(
         Icons.batch_prediction,
         color: Colors.amber,
@@ -148,19 +144,21 @@ class _StudentPageState extends State<StudentPage> {
         );
       },
       shape: const RoundedRectangleBorder(
-          side: BorderSide(color: Colors.black, width: 2),
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
-              bottomRight: Radius.circular(25),
-              bottomLeft: Radius.circular(25))),
+        side: BorderSide(color: Colors.black, width: 2),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+          bottomRight: Radius.circular(25),
+          bottomLeft: Radius.circular(25),
+        ),
+      ),
       trailing: GestureDetector(
         child: Icon(
           Icons.arrow_forward,
           color: Colors.red.shade600,
         ),
         onTap: () async {
-          debugPrint("gay");
+          debugPrint("arrow forward tapped");
         },
       ),
     );
@@ -190,9 +188,9 @@ class _StudentPageState extends State<StudentPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _pickFileAndUpload,
-        tooltip: 'Increment',
+        tooltip: 'Upload',
         child: const Icon(Icons.upload_file),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
