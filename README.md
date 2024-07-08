@@ -1,4 +1,4 @@
-# Interactive Learning App
+# SEN - Smart Educational Neural-net
 
 This application allows you to upload a PDF, process it using GeminiAPI, and generate multiple-choice questions (MCQs) to create an interactive learning environment. Students can use this to learn or take tests, while teachers can provide tests or viva questions to students.
 
