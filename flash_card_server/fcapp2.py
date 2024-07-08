@@ -89,9 +89,8 @@ def send_data():
         master_dictionary["ids"].append(doc_id)
 
         print(master_dictionary)
-        return jsonify(
-            {"ids": master_dictionary["ids"], **{doc_id: master_dictionary[doc_id]}}
-        )
+        return {"ids": master_dictionary["ids"], **{doc_id: master_dictionary[doc_id]}}
+
     else:
         return jsonify({"error": "No text extracted from document"})
 
