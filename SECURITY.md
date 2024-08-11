@@ -11,7 +11,8 @@ Reporting a Vulnerability
 We take the security of the sen_app_latest project seriously. If you discover a vulnerability, we encourage you to report it as soon as possible to help us maintain the safety and security of our users.
 
 How to Report
-Email: Please send an email to [your security contact email] with the details of the vulnerability. Include a detailed description of the vulnerability and steps to reproduce it.
+Email: Please send an email to darshananand004@gmail.com | Naindeep090@gmail.com
+with the details of the vulnerability. Include a detailed description of the vulnerability and steps to reproduce it.
 
 Response Time: You can expect a response within 72 hours of your report. We will work with you to understand the issue and take appropriate action.
 
